@@ -34,16 +34,15 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
     next();
 });
-  
-userSchema.statics.matchPasswordAndGenerateToken = async function (email, password) {
-    const user = await this.findOne({ email });
-    if (!user) throw new Error("User not found");
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new Error("Incorrect password");
-
-    return user;
-};
+userSchema.methods.matchPasswordAndGenerateToken = async function (enteredPassword) {
+    try {
+      const isMatch = await bcrypt.compare(enteredPassword, this.password); 
+      return isMatch;
+    } catch (error) {
+      throw new Error("Password comparison failed");
+    }
+  };
 
 
 const User = mongoose.model("User", userSchema);

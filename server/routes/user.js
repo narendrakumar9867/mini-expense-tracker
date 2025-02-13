@@ -4,41 +4,59 @@ import { createTokenForUser } from '../services/authentication.js';
 
 const router = express.Router();
 
-router.get('/user/register', (req, res) => {
+router.get('/register', (req, res) => {
   return res.render('register');
 });
 
-router.get('/user/login', (req, res) => {
+router.get('/login', (req, res) => {
   return res.render('login');
 });
 
-router.post('/user/register', async (req, res) => {
+router.post('/register', async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
-  await User.create({
-    firstname, 
-    lastname,
-    email,
-    password,
-  });
-  return res.redirect("/");
-});
-
-router.post('/user/login', async (req, res) => {
-  const { email, password } = req.body;
   try {
-    const user = await User.matchPasswordAndGenerateToken(email, password);
-    if (user) {
-      const token = createTokenForUser(user); 
-      return res.cookie("token", token).redirect("/");
-    } else {
-      return res.render("login", { error: "Incorrect email or password" });
+    const existUser = await User.findOne({ email });
+    if(existUser) {
+      return res.status(400).json({ error:"Email already exist..."})
     }
-  } catch (error) {
-    return res.render("login", { error: "Incorrect email or password" });
+
+    await User.create({
+      firstname, 
+      lastname,
+      email,
+      password,
+    });
+    return res.status(201).json({ message: "User registered successfully."});
+  } catch(error) {
+    return res.status(500).json({ error: "Internal Server issue..."})
   }
 });
 
-router.get('/user/logout', (req, res) => {
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ error: "Incorrect email or password" });
+    }
+    const isMatch = await user.matchPasswordAndGenerateToken(password);
+    
+    if (isMatch) {
+      const token = createTokenForUser(user);
+      return res.cookie("token", token, { httpOnly: true }).json({ message: "Login successful", token });
+    } else {
+      return res.status(400).json({ error: "Incorrect email or password" });
+    }
+  } catch (error) {
+    console.error("Login Error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+router.get('/logout', (req, res) => {
   res.clearCookie("token").redirect("/");
 });
 

@@ -18,14 +18,14 @@ mongoose.connect("mongodb://127.0.0.1:27017/mini_expense_tracker").then(() => {
   console.log('MongoDB connection error...', err);
 })
 
+server.use(express.json());
 server.use(bodyParser.json());
 server.use(cors());
-server.use('/user', userRoutes);
 server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser());
 server.use(checkforAuthenticationCookie('token'));
 
-
+server.use('/user', userRoutes);
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
