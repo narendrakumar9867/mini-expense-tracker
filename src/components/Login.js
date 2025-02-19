@@ -56,9 +56,22 @@ function LoginFinal() {
     })
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(user);
+    try {
+      const response = await fetch(`http://localhost:4000/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+
+      console.log(response);
+    } catch (error) {
+      console.log("login", error);1
+    }
   };
 
   return (
@@ -107,10 +120,10 @@ function LoginFinal() {
               onChange={handleInput}
             />
           </FormControl>
+          <Button type="submit" sx={{ mt: 1 }}>Log in</Button>
         </form>
-        <Button type="submit" sx={{ mt: 1 }}>Log in</Button>
         <Typography
-          endDecorator={<RouterLink to="/register">Register</RouterLink>}
+          endDecorator={<RouterLink to="/user/register">Register</RouterLink>}
           sx={{ fontSize: 'sm', alignSelf: 'center' }}
         >
           Don&apos;t have an account?

@@ -11,6 +11,7 @@ import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
+import { Link as RouterLink } from 'react-router-dom';
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme();
@@ -51,30 +52,30 @@ function RegisterFinal() {
     console.log(e);
     let name = e.target.name;
     let value = e.target.value;
-
     setUser({
       ... user,
       [name]: value,
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    alert(user);
+    e.preventDefault()
     console.log(user);
     try {
-      const response = await fetch(`http://localhost:4000/api/user/register`, {
+      const response = await fetch(`http://localhost:4000/user/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(user),
       });
+
+      console.log(response);
     } catch (error) {
-      
+      console.log("register", error);
     }
-    
-  };  
+  };
+
   return (
     <main>
       <ModeToggle />
@@ -140,11 +141,11 @@ function RegisterFinal() {
               value={user.password}
               onChange={handleInput}
             />
-          </FormControl>
+          </FormControl>5
+          <Button sx={{ mt: 1 }} type='submit'>Register</Button>
         </form>
-        <Button sx={{ mt: 1 }}>Register</Button>
         <Typography
-          endDecorator={<Link onClick={handleSubmit}>Login</Link>}
+          endDecorator={<RouterLink to='/user/login'>Login</RouterLink>}
           sx={{ fontSize: 'sm', alignSelf: 'center' }}
         >
           Already have an account?

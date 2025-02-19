@@ -5,11 +5,11 @@ import { createTokenForUser } from '../services/authentication.js';
 const router = express.Router();
 
 router.get('/register', (req, res) => {
-  return res.render('register');
+  return res.json({ msg: "register route is working."})
 });
 
 router.get('/login', (req, res) => {
-  return res.render('login');
+  return res.json({ msg: "login route is working."})
 });
 
 router.post('/register', async (req, res) => {
@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
     
     if (isMatch) {
       const token = createTokenForUser(user);
-      return res.cookie("token", token, { httpOnly: true }).json({ message: "Login successful", token });
+      return res.json({ message: "Login successful", token });
     } else {
       return res.status(400).json({ error: "Incorrect email or password" });
     }
@@ -54,6 +54,7 @@ router.post('/login', async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 
 router.get('/logout', (req, res) => {
