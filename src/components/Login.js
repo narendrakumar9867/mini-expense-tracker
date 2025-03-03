@@ -10,7 +10,7 @@ import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme();
@@ -44,6 +44,7 @@ function LoginFinal() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleInput = (e) => {
     console.log(e);
@@ -53,7 +54,7 @@ function LoginFinal() {
     setUser({
       ... user,
       [name]: value,
-    })
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -68,6 +69,11 @@ function LoginFinal() {
         body: JSON.stringify(user),
       });
 
+      if(response.ok) {
+        navigate("/user/home");
+      } else {
+        alert("Invalid credentials");
+      }
       console.log(response);
     } catch (error) {
       console.log("login", error);1
@@ -133,5 +139,4 @@ function LoginFinal() {
   );
 }
   
-
 export default LoginFinal;

@@ -11,7 +11,7 @@ import Button from '@mui/joy/Button';
 import Link from '@mui/joy/Link';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme();
@@ -47,6 +47,7 @@ function RegisterFinal() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleInput = (e) => {
     console.log(e);
@@ -61,6 +62,10 @@ function RegisterFinal() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log(user);
+
+    sessionStorage.setItem("userFullName", `${user.firstname} ${user.lastname}`);
+    sessionStorage.setItem("userEmail", user.email);
+
     try {
       const response = await fetch(`http://localhost:4000/user/register`, {
         method: "POST",
@@ -70,6 +75,11 @@ function RegisterFinal() {
         body: JSON.stringify(user),
       });
 
+      if(response.ok) {
+        navigate("/user/home");
+      } else {
+        console.log("register failed");
+      }
       console.log(response);
     } catch (error) {
       console.log("register", error);
